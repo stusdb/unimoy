@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniMoy - Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg-primary: #0a0a0a;
+            --color-bg-secondary: #1a1a1a;
+            --color-bg-card: #222222;
+            --color-accent-red: #dc2626;
+            --color-accent-blue: #2563eb;
+            --color-accent-green: #16a34a;
+            --color-accent-hover-red: #b91c1c;
+            --color-accent-hover-blue: #1d4ed8;
+            --color-accent-hover-green: #15803d;
+            --color-text-primary: #f5f5f9;
+            --color-text-secondary: #b3b3b3;
+            --color-border: #404040;
+            --color-error: #ef4444;
+            --color-success: #16a34a;
+            --color-warning: #eab308;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --color-bg-primary: #f8fafc;
+            --color-bg-secondary: #ffffff;
+            --color-bg-card: #ffffff;
+            --color-accent-red: #ef4444;
+            --color-accent-blue: #3b82f6;
+            --color-accent-green: #22c55e;
+            --color-accent-hover-red: #dc2626;
+            --color-accent-hover-blue: #2563eb;
+            --color-accent-hover-green: #16a34a;
+            --color-text-primary: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-border: #e2e8f0;
+            --color-error: #dc2626;
+            --color-success: #16a34a;
+            --color-warning: #eab308;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(0, 217, 163, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 184, 138, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 30px 0;
+            text-align: center;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00d9a3 0%, #009871 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f1419;
+            box-shadow: 0 4px 14px rgba(0, 217, 163, 0.3);
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d9a3 0%, #00b88a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            margin-top: 8px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            border-color: var(--color-accent-green);
+        }
+
+        .theme-toggle svg {
+            color: var(--color-text-primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover svg {
+            color: var(--color-accent-green);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            border-color: var(--color-accent-blue);
+        }
+
+        .back-button svg {
+            color: var(--color-text-primary);
+            transition: var(--transition);
+        }
+
+        .back-button:hover svg {
+            color: var(--color-accent-blue);
+        }
+
+        main {
+            flex: 1;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .card {
+            background: var(--color-bg-card);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 14px;
+            color: var(--color-text-primary);
+            font-size: 17px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+
+        .input-field:hover {
+            border-color: #00d9a3;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0, 217, 163, 0.12);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12), 0 6px 16px rgba(0, 217, 163, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .input-field::placeholder {
+            color: var(--color-text-secondary);
+            opacity: 0.5;
+            font-weight: 500;
+        }
+
+        .module-result {
+            background: rgba(22, 163, 74, 0.08);
+            border: 2px solid rgba(22, 163, 74, 0.25);
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .module-result.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .result-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--color-accent-green);
+            letter-spacing: -0.02em;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--color-accent-green) 0%, var(--color-accent-hover-green) 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 19px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 8px 24px rgba(22, 163, 74, 0.35);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: -0.01em;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-accent-hover-green) 0%, #15803d 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(22, 163, 74, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0px);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+            border: 2px solid var(--color-border);
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: -0.01em;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-accent-blue);
+            color: var(--color-accent-blue);
+            background: rgba(37, 99, 235, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0px);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            animation: shake 0.4s ease-out;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .final-result-card {
+            background: linear-gradient(135deg, rgba(0, 217, 163, 0.12) 0%, rgba(0, 152, 113, 0.08) 100%);
+            border: 3px solid var(--color-accent-green);
+            border-radius: 24px;
+            padding: 40px 32px;
+            text-align: center;
+            display: none;
+            animation: scaleIn 0.5s ease-out;
+            box-shadow: 0 12px 40px rgba(0, 217, 163, 0.2);
+        }
+
+        .final-result-card.show {
+            display: block;
+        }
+
+        .final-result-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .final-result-value {
+            font-size: 64px;
+            font-weight: 900;
+            color: var(--color-accent-green);
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .final-result-subtitle {
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--color-bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .results-table th {
+            background: rgba(0, 217, 163, 0.1);
+            color: var(--color-accent-green);
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .results-table td {
+            font-size: 15px;
+            color: var(--color-text-primary);
+        }
+
+        .results-table tbody tr:hover {
+            background: rgba(0, 217, 163, 0.05);
+        }
+
+        .results-table tfoot tr {
+            background: rgba(0, 217, 163, 0.15);
+            font-weight: 700;
+        }
+
+        .results-table tfoot td {
+            border-bottom: none;
+            font-size: 16px;
+            color: var(--color-accent-green);
+        }
+
+        .module-card {
+            background: var(--color-bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 2px solid var(--color-border);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .module-card:hover {
+            border-color: var(--color-accent-green);
+            box-shadow: 0 4px 20px rgba(0, 217, 163, 0.1);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .module-title-input {
+            font-size: 18px;
+            font-weight: 700;
+            background: transparent;
+            border: none;
+            color: var(--color-text-primary);
+            font-family: 'Tajawal', sans-serif;
+            width: 60%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .module-title-input:focus {
+            outline: none;
+            background: var(--color-bg-secondary);
+        }
+
+        .module-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-remove-module {
+            padding: 8px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+            border: 1px solid var(--color-error);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-remove-module:hover {
+            background: var(--color-error);
+            color: #ffffff;
+        }
+
+        .module-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .module-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            color: var(--color-text-primary);
+            font-size: 15px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300d9a3' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 16px center;
+            padding-left: 40px;
+        }
+
+        .module-select:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+        }
+
+        .module-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-add-module {
+            width: 100%;
+            padding: 16px;
+            background: var(--color-bg-secondary);
+            color: var(--color-accent-green);
+            border: 2px dashed var(--color-border);
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-add-module:hover {
+            border-color: var(--color-accent-green);
+            background: rgba(0, 217, 163, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .coefficient-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--color-accent-green);
+            padding: 6px 14px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-right: 8px;
+            border: 1px solid rgba(0, 217, 163, 0.25);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            .card-title {
+                font-size: 18px;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .input-field {
+                font-size: 16px;
+                padding: 12px 16px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .btn-primary {
+                padding: 18px;
+                font-size: 18px;
+            }
+
+            .btn-secondary {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            .final-result-card {
+                padding: 32px 24px;
+            }
+
+            .final-result-value {
+                font-size: 48px;
+            }
+
+            .result-value {
+                font-size: 28px;
+            }
+
+            .theme-toggle,
+            .back-button {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="تبديل المظهر">
+        <svg id="themeIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <button class="back-button" id="backButton" aria-label="رجوع">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+
+   <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f1419" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                </div>
+                <h1 class="logo-text">UniMoy</h1>
+            </div>
+            <p class="welcome-message">احسب معدلك الجامعي بسهولة ودقة</p>
+        </header>
+
+        <main>
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Math Module (Coefficient 3: TD 40% + Exam 60%) -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                    </svg>
+                    <span>Math</span>
+                    <span class="coefficient-badge">Coef. 3</span>
+                </h2>
+                <div class="module-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="mathTD">TD (40%)</label>
+                        <input type="number" id="mathTD" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="mathExam">Examen (60%)</label>
+                        <input type="number" id="mathExam" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                </div>
+                <div class="module-result" id="mathResult">
+                    <div class="result-label">النتيجة مع المعامل</div>
+                    <div class="result-value" id="mathResultValue">0.00</div>
+                </div>
+            </div>
+
+            <!-- Physique Module (Coefficient 3: TD 40% + Exam 60%) -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <circle cx="12" cy="12" r="6"></circle>
+                        <circle cx="12" cy="12" r="2"></circle>
+                    </svg>
+                    <span>Physique</span>
+                    <span class="coefficient-badge">Coef. 3</span>
+                </h2>
+                <div class="module-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="physiqueTD">TD (40%)</label>
+                        <input type="number" id="physiqueTD" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="physiqueExam">Examen (60%)</label>
+                        <input type="number" id="physiqueExam" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                </div>
+                <div class="module-result" id="physiqueResult">
+                    <div class="result-label">النتيجة مع المعامل</div>
+                    <div class="result-value" id="physiqueResultValue">0.00</div>
+                </div>
+            </div>
+
+            <!-- Chimie Module (Coefficient 3: TD 40% + Exam 60%) -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 2v17.5A2.5 2.5 0 0 1 6.5 22v0A2.5 2.5 0 0 1 4 19.5V2"></path>
+                        <path d="M20 2v17.5a2.5 2.5 0 0 1-2.5 2.5v0a2.5 2.5 0 0 1-2.5-2.5V2"></path>
+                    </svg>
+                    <span>Chimie</span>
+                    <span class="coefficient-badge">Coef. 3</span>
+                </h2>
+                <div class="module-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="chimieTD">TD (40%)</label>
+                        <input type="number" id="chimieTD" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="chimieExam">Examen (60%)</label>
+                        <input type="number" id="chimieExam" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                </div>
+                <div class="module-result" id="chimieResult">
+                    <div class="result-label">النتيجة مع المعامل</div>
+                    <div class="result-value" id="chimieResultValue">0.00</div>
+                </div>
+            </div>
+
+            <!-- Informatique Module (Coefficient 2: TP 40% + Exam 60%) -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    <span>Informatique</span>
+                    <span class="coefficient-badge">Coef. 2</span>
+                </h2>
+                <div class="module-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="infoTP">TP (40%)</label>
+                        <input type="number" id="infoTP" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="infoExam">Examen (60%)</label>
+                        <input type="number" id="infoExam" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                </div>
+                <div class="module-result" id="infoResult">
+                    <div class="result-label">النتيجة مع المعامل</div>
+                    <div class="result-value" id="infoResultValue">0.00</div>
+                </div>
+            </div>
+
+            <!-- Additional Modules (Coefficient 1) -->
+            <div class="card">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Modules Complémentaires</span>
+                    <span class="coefficient-badge">Coef. 1 chacun</span>
+                </h2>
+                <div class="module-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="tpChimie">TP Chimie</label>
+                        <input type="number" id="tpChimie" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="tpPhysique">TP Physique</label>
+                        <input type="number" id="tpPhysique" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="mst">MST</label>
+                        <input type="number" id="mst" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="mdr">MDR</label>
+                        <input type="number" id="mdr" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="ethique">Éthique</label>
+                        <input type="number" id="ethique" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="english">English</label>
+                        <input type="number" id="english" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="francais">Français</label>
+                        <input type="number" id="francais" class="input-field" placeholder="0 - 20" min="0" max="20" step="0.01">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optional Custom Modules Section -->
+            <div class="card" style="border: 2px dashed var(--color-border); background: rgba(0, 217, 163, 0.02);">
+                <h2 class="card-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    <span>وحدات إضافية اختيارية</span>
+                    <span class="coefficient-badge" style="background: rgba(37, 99, 235, 0.15); border-color: rgba(37, 99, 235, 0.25); color: var(--color-accent-blue);">اختياري</span>
+                </h2>
+                <p style="font-size: 14px; color: var(--color-text-secondary); margin-bottom: 20px;">أضف وحدات إضافية حسب الحاجة. هذا القسم اختياري ولن يؤثر على الوحدات الأساسية.</p>
+                
+                <!-- Custom Modules Container -->
+                <div id="customModulesContainer"></div>
+
+                <!-- Add Custom Module Button -->
+                <button type="button" class="btn-add-module" id="addCustomModuleBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>إضافة وحدة إضافية</span>
+                </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="card">
+                <button type="button" class="btn-primary" id="calculateBtn">
+                    <span>حساب المعدل</span>
+                </button>
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" id="resetBtn">
+                        <span>إعادة تعيين</span>
+                    </button>
+                    <button type="button" class="btn-secondary" id="downloadPdfBtn">
+                        <span>تحميل كشف النقاط PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Final Result -->
+            <div class="card final-result-card" id="finalResultCard">
+                <div class="final-result-title">معدل الفصل الدراسي</div>
+                <div class="final-result-value" id="finalResultValue">0.00</div>
+                <div class="final-result-subtitle">من 20</div>
+                
+                <!-- Results Table -->
+                <div id="resultsTableContainer" style="display: none; margin-top: 30px;">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الوحدة</th>
+                                <th>المعامل</th>
+                                <th>المعدل</th>
+                                <th>النتيجة المرجحة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>المجموع</strong></td>
+                                <td id="totalCoefficient">0</td>
+                                <td id="totalWeighted">0.00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>UniMoy &copy; 2026 - حاسبة المعدل الجامعي الذكية</p>
+        </footer>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════════════════
+           UNIMOY CALCULATOR - FIXED BASE MODULES + OPTIONAL CUSTOM MODULES
+           - Base modules: Math, Physique, Chimie, Informatique, and 7 others (fixed structure)
+           - Optional custom modules: User can add/remove custom modules dynamically
+           - PDF generation: Uses browser print to save as PDF
+        ═══════════════════════════════════════════════════════════ */
+
+        // Custom Optional Modules Management
+        let customModules = [];
+        let customModuleCounter = 0;
+
+        // Add new custom module
+        function addCustomModule() {
+            customModuleCounter++;
+            const module = {
+                id: customModuleCounter,
+                name: '',
+                coefficient: 1,
+                type: 'exam_only', // exam_only, exam_td, exam_tp
+                examGrade: null,
+                tdGrade: null,
+                tpGrade: null
+            };
+            customModules.push(module);
+            renderCustomModules();
+        }
+
+        // Remove custom module
+        function removeCustomModule(id) {
+            customModules = customModules.filter(m => m.id !== id);
+            renderCustomModules();
+        }
+
+        // Render all custom modules
+        function renderCustomModules() {
+            const container = document.getElementById('customModulesContainer');
+            container.innerHTML = '';
+
+            customModules.forEach(module => {
+                const moduleCard = createCustomModuleCard(module);
+                container.appendChild(moduleCard);
+            });
+        }
+
+        // Create custom module card HTML
+        function createCustomModuleCard(module) {
+            const card = document.createElement('div');
+            card.className = 'module-card';
+            card.innerHTML = `
+                <div class="module-header">
+                    <input 
+                        type="text" 
+                        class="module-title-input" 
+                        placeholder="اسم الوحدة (مثال: Thermodynamique, Optique)" 
+                        value="${module.name}"
+                        data-module-id="${module.id}"
+                        data-field="name"
+                    >
+                    <div class="module-actions">
+                        <button class="btn-remove-module" data-module-id="${module.id}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            حذف
+                        </button>
+                    </div>
+                </div>
+
+                <div class="module-config">
+                    <div class="input-group">
+                        <label class="input-label">المعامل</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="1" 
+                            min="1" 
+                            max="10" 
+                            step="1"
+                            value="${module.coefficient}"
+                            data-module-id="${module.id}"
+                            data-field="coefficient"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">نوع التقييم</label>
+                        <div class="select-wrapper">
+                            <select 
+                                class="module-select" 
+                                data-module-id="${module.id}"
+                                data-field="type"
+                            >
+                                <option value="exam_only" ${module.type === 'exam_only' ? 'selected' : ''}>امتحان فقط</option>
+                                <option value="exam_td" ${module.type === 'exam_td' ? 'selected' : ''}>امتحان + TD</option>
+                                <option value="exam_tp" ${module.type === 'exam_tp' ? 'selected' : ''}>امتحان + TP</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="module-inputs" data-module-id="${module.id}">
+                    ${renderCustomModuleInputs(module)}
+                </div>
+            `;
+
+            // Attach event listeners
+            attachCustomModuleEventListeners(card, module.id);
+
+            return card;
+        }
+
+        // Render inputs based on custom module type
+        function renderCustomModuleInputs(module) {
+            let html = '';
+
+            if (module.type === 'exam_only') {
+                html = `
+                    <div class="input-wrapper">
+                        <label>نقطة الامتحان (100%)</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="0 - 20" 
+                            min="0" 
+                            max="20" 
+                            step="0.01"
+                            value="${module.examGrade !== null ? module.examGrade : ''}"
+                            data-module-id="${module.id}"
+                            data-field="examGrade"
+                        >
+                    </div>
+                `;
+            } else if (module.type === 'exam_td') {
+                html = `
+                    <div class="input-wrapper">
+                        <label>نقطة TD (40%)</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="0 - 20" 
+                            min="0" 
+                            max="20" 
+                            step="0.01"
+                            value="${module.tdGrade !== null ? module.tdGrade : ''}"
+                            data-module-id="${module.id}"
+                            data-field="tdGrade"
+                        >
+                    </div>
+                    <div class="input-wrapper">
+                        <label>نقطة الامتحان (60%)</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="0 - 20" 
+                            min="0" 
+                            max="20" 
+                            step="0.01"
+                            value="${module.examGrade !== null ? module.examGrade : ''}"
+                            data-module-id="${module.id}"
+                            data-field="examGrade"
+                        >
+                    </div>
+                `;
+            } else if (module.type === 'exam_tp') {
+                html = `
+                    <div class="input-wrapper">
+                        <label>نقطة TP (40%)</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="0 - 20" 
+                            min="0" 
+                            max="20" 
+                            step="0.01"
+                            value="${module.tpGrade !== null ? module.tpGrade : ''}"
+                            data-module-id="${module.id}"
+                            data-field="tpGrade"
+                        >
+                    </div>
+                    <div class="input-wrapper">
+                        <label>نقطة الامتحان (60%)</label>
+                        <input 
+                            type="number" 
+                            class="input-field" 
+                            placeholder="0 - 20" 
+                            min="0" 
+                            max="20" 
+                            step="0.01"
+                            value="${module.examGrade !== null ? module.examGrade : ''}"
+                            data-module-id="${module.id}"
+                            data-field="examGrade"
+                        >
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        // Attach event listeners to custom module card
+        function attachCustomModuleEventListeners(card, moduleId) {
+            // Remove button
+            const removeBtn = card.querySelector('.btn-remove-module');
+            removeBtn.addEventListener('click', () => removeCustomModule(moduleId));
+
+            // All input fields
+            const inputs = card.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', (e) => {
+                    updateCustomModuleField(
+                        parseInt(e.target.dataset.moduleId),
+                        e.target.dataset.field,
+                        e.target.value
+                    );
+                });
+            });
+
+            // Type selector special handling
+            const typeSelect = card.querySelector('select[data-field="type"]');
+            typeSelect.addEventListener('change', () => {
+                const module = customModules.find(m => m.id === moduleId);
+                // Reset grades when type changes
+                module.examGrade = null;
+                module.tdGrade = null;
+                module.tpGrade = null;
+                renderCustomModules();
+            });
+        }
+
+        // Update custom module field
+        function updateCustomModuleField(moduleId, field, value) {
+            const module = customModules.find(m => m.id === moduleId);
+            if (!module) return;
+
+            if (field === 'coefficient') {
+                module[field] = parseInt(value) || 1;
+            } else if (field === 'examGrade' || field === 'tdGrade' || field === 'tpGrade') {
+                module[field] = value === '' ? null : parseFloat(value);
+            } else {
+                module[field] = value;
+            }
+        }
+
+        // Calculate custom module average
+        function calculateCustomModuleAverage(module) {
+            if (module.type === 'exam_only') {
+                return module.examGrade !== null ? module.examGrade : 0;
+            } else if (module.type === 'exam_td') {
+                if (module.examGrade === null || module.tdGrade === null) return 0;
+                return (module.tdGrade * 0.4) + (module.examGrade * 0.6);
+            } else if (module.type === 'exam_tp') {
+                if (module.examGrade === null || module.tpGrade === null) return 0;
+                return (module.tpGrade * 0.4) + (module.examGrade * 0.6);
+            }
+            return 0;
+        }
+
+        // Fixed modules calculation (original logic)
+        const COEF_MATH = 3;
+        const COEF_PHYSIQUE = 3;
+        const COEF_CHIMIE = 3;
+        const COEF_INFO = 2;
+        const COEF_OTHER = 1;
+        const BASE_TOTAL_COEFFICIENT = 17;
+
+        function calculateModuleScore(td, exam) {
+            return (td * 0.4) + (exam * 0.6);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Calculate complete semester average (base + custom modules)
+        function calculateCompleteAverage() {
+            // Get base module values
+            const mathTD = parseFloat(document.getElementById('mathTD').value) || 0;
+            const mathExam = parseFloat(document.getElementById('mathExam').value) || 0;
+            const physiqueTD = parseFloat(document.getElementById('physiqueTD').value) || 0;
+            const physiqueExam = parseFloat(document.getElementById('physiqueExam').value) || 0;
+            const chimieTD = parseFloat(document.getElementById('chimieTD').value) || 0;
+            const chimieExam = parseFloat(document.getElementById('chimieExam').value) || 0;
+            const infoTP = parseFloat(document.getElementById('infoTP').value) || 0;
+            const infoExam = parseFloat(document.getElementById('infoExam').value) || 0;
+            const tpChimie = parseFloat(document.getElementById('tpChimie').value) || 0;
+            const tpPhysique = parseFloat(document.getElementById('tpPhysique').value) || 0;
+            const mst = parseFloat(document.getElementById('mst').value) || 0;
+            const mdr = parseFloat(document.getElementById('mdr').value) || 0;
+            const ethique = parseFloat(document.getElementById('ethique').value) || 0;
+            const english = parseFloat(document.getElementById('english').value) || 0;
+            const francais = parseFloat(document.getElementById('francais').value) || 0;
+
+            // Check if at least one field is filled (base or custom)
+            const baseInputs = [mathTD, mathExam, physiqueTD, physiqueExam, chimieTD, chimieExam, 
+                              infoTP, infoExam, tpChimie, tpPhysique, mst, mdr, ethique, english, francais];
+            const hasBaseInput = baseInputs.some(val => val > 0);
+            const hasCustomInput = customModules.some(m => {
+                return (m.examGrade !== null && m.examGrade > 0) || 
+                       (m.tdGrade !== null && m.tdGrade > 0) || 
+                       (m.tpGrade !== null && m.tpGrade > 0);
+            });
+
+            if (!hasBaseInput && !hasCustomInput) {
+                showError('يرجى إدخال درجة واحدة على الأقل');
+                return;
+            }
+
+            // Validate custom modules
+            for (let module of customModules) {
+                if (module.type === 'exam_only' && module.examGrade !== null) {
+                    if (!module.name.trim()) {
+                        showError('يرجى إدخال اسم للوحدة الإضافية');
+                        return;
+                    }
+                }
+                if (module.type === 'exam_td' && (module.examGrade !== null || module.tdGrade !== null)) {
+                    if (!module.name.trim()) {
+                        showError('يرجى إدخال اسم للوحدة الإضافية');
+                        return;
+                    }
+                    if (module.examGrade !== null && module.tdGrade === null) {
+                        showError(`يرجى إدخال نقطة TD لـ ${module.name}`);
+                        return;
+                    }
+                    if (module.tdGrade !== null && module.examGrade === null) {
+                        showError(`يرجى إدخال نقطة الامتحان لـ ${module.name}`);
+                        return;
+                    }
+                }
+                if (module.type === 'exam_tp' && (module.examGrade !== null || module.tpGrade !== null)) {
+                    if (!module.name.trim()) {
+                        showError('يرجى إدخال اسم للوحدة الإضافية');
+                        return;
+                    }
+                    if (module.examGrade !== null && module.tpGrade === null) {
+                        showError(`يرجى إدخال نقطة TP لـ ${module.name}`);
+                        return;
+                    }
+                    if (module.tpGrade !== null && module.examGrade === null) {
+                        showError(`يرجى إدخال نقطة الامتحان لـ ${module.name}`);
+                        return;
+                    }
+                }
+
+                // Validate grade ranges
+                const grades = [module.examGrade, module.tdGrade, module.tpGrade].filter(g => g !== null);
+                for (let grade of grades) {
+                    if (grade < 0 || grade > 20) {
+                        showError(`النقاط يجب أن تكون بين 0 و 20 لـ ${module.name}`);
+                        return;
+                    }
+                }
+            }
+
+            // Calculate base module scores
+            const mathScore = calculateModuleScore(mathTD, mathExam);
+            const physiqueScore = calculateModuleScore(physiqueTD, physiqueExam);
+            const chimieScore = calculateModuleScore(chimieTD, chimieExam);
+            const infoScore = calculateModuleScore(infoTP, infoExam);
+
+            // Calculate weighted scores for base modules
+            const mathWeighted = mathScore * COEF_MATH;
+            const physiqueWeighted = physiqueScore * COEF_PHYSIQUE;
+            const chimieWeighted = chimieScore * COEF_CHIMIE;
+            const infoWeighted = infoScore * COEF_INFO;
+            const otherModulesWeighted = tpChimie + tpPhysique + mst + mdr + ethique + english + francais;
+
+            // Display base module results
+            document.getElementById('mathResultValue').textContent = mathWeighted.toFixed(2);
+            document.getElementById('mathResult').classList.add('show');
+            document.getElementById('physiqueResultValue').textContent = physiqueWeighted.toFixed(2);
+            document.getElementById('physiqueResult').classList.add('show');
+            document.getElementById('chimieResultValue').textContent = chimieWeighted.toFixed(2);
+            document.getElementById('chimieResult').classList.add('show');
+            document.getElementById('infoResultValue').textContent = infoWeighted.toFixed(2);
+            document.getElementById('infoResult').classList.add('show');
+
+            // Calculate custom modules contribution
+            let customTotalWeighted = 0;
+            let customTotalCoefficient = 0;
+            const customResults = [];
+
+            customModules.forEach(module => {
+                const hasAnyGrade = module.examGrade !== null || module.tdGrade !== null || module.tpGrade !== null;
+                if (hasAnyGrade && module.name.trim()) {
+                    const average = calculateCustomModuleAverage(module);
+                    const weightedScore = average * module.coefficient;
+                    
+                    customTotalWeighted += weightedScore;
+                    customTotalCoefficient += module.coefficient;
+
+                    customResults.push({
+                        name: module.name,
+                        coefficient: module.coefficient,
+                        average: average.toFixed(2),
+                        weighted: weightedScore.toFixed(2)
+                    });
+                }
+            });
+
+            // Calculate final semester average
+            const baseTotalWeighted = mathWeighted + physiqueWeighted + chimieWeighted + 
+                                     infoWeighted + otherModulesWeighted;
+            const totalWeightedScore = baseTotalWeighted + customTotalWeighted;
+            const totalCoefficient = BASE_TOTAL_COEFFICIENT + customTotalCoefficient;
+            const semesterAverage = totalWeightedScore / totalCoefficient;
+
+            // Display final result
+            document.getElementById('finalResultValue').textContent = semesterAverage.toFixed(2);
+            document.getElementById('finalResultCard').classList.add('show');
+
+            // Populate results table (base modules)
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+
+            // Add base modules to table
+            const baseModules = [
+                { name: 'Math', coefficient: COEF_MATH, average: mathScore.toFixed(2), weighted: mathWeighted.toFixed(2) },
+                { name: 'Physique', coefficient: COEF_PHYSIQUE, average: physiqueScore.toFixed(2), weighted: physiqueWeighted.toFixed(2) },
+                { name: 'Chimie', coefficient: COEF_CHIMIE, average: chimieScore.toFixed(2), weighted: chimieWeighted.toFixed(2) },
+                { name: 'Informatique', coefficient: COEF_INFO, average: infoScore.toFixed(2), weighted: infoWeighted.toFixed(2) },
+                { name: 'TP Chimie', coefficient: COEF_OTHER, average: tpChimie.toFixed(2), weighted: tpChimie.toFixed(2) },
+                { name: 'TP Physique', coefficient: COEF_OTHER, average: tpPhysique.toFixed(2), weighted: tpPhysique.toFixed(2) },
+                { name: 'MST', coefficient: COEF_OTHER, average: mst.toFixed(2), weighted: mst.toFixed(2) },
+                { name: 'MDR', coefficient: COEF_OTHER, average: mdr.toFixed(2), weighted: mdr.toFixed(2) },
+                { name: 'Éthique', coefficient: COEF_OTHER, average: ethique.toFixed(2), weighted: ethique.toFixed(2) },
+                { name: 'English', coefficient: COEF_OTHER, average: english.toFixed(2), weighted: english.toFixed(2) },
+                { name: 'Français', coefficient: COEF_OTHER, average: francais.toFixed(2), weighted: francais.toFixed(2) }
+            ];
+
+            baseModules.forEach(module => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${module.name}</td>
+                    <td>${module.coefficient}</td>
+                    <td>${module.average}</td>
+                    <td>${module.weighted}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add custom modules to table
+            customResults.forEach(module => {
+                const row = document.createElement('tr');
+                row.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
+                row.innerHTML = `
+                    <td><strong>${module.name}</strong> <span style="font-size: 11px; color: var(--color-accent-blue);">(إضافي)</span></td>
+                    <td>${module.coefficient}</td>
+                    <td>${module.average}</td>
+                    <td>${module.weighted}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('totalCoefficient').textContent = totalCoefficient;
+            document.getElementById('totalWeighted').textContent = totalWeightedScore.toFixed(2);
+            document.getElementById('resultsTableContainer').style.display = 'block';
+
+            // Scroll to result
+            document.getElementById('finalResultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Reset calculator
+        function resetCalculator() {
+            // Reset base module inputs
+            document.querySelectorAll('.input-field').forEach(input => {
+                input.value = '';
+            });
+
+            // Hide base module results
+            document.querySelectorAll('.module-result').forEach(result => {
+                result.classList.remove('show');
+            });
+
+            // Reset custom modules
+            customModules = [];
+            customModuleCounter = 0;
+            renderCustomModules();
+
+            // Hide final results
+            document.getElementById('finalResultCard').classList.remove('show');
+            document.getElementById('resultsTableContainer').style.display = 'none';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Generate PDF
+        function generatePDF() {
+            const finalAverage = document.getElementById('finalResultValue').textContent;
+            
+            if (finalAverage === '0.00') {
+                showError('لا توجد نتائج لتحميلها. قم بحساب المعدل أولاً');
+                return;
+            }
+
+            // Get base module values
+            const mathTD = parseFloat(document.getElementById('mathTD').value) || 0;
+            const mathExam = parseFloat(document.getElementById('mathExam').value) || 0;
+            const physiqueTD = parseFloat(document.getElementById('physiqueTD').value) || 0;
+            const physiqueExam = parseFloat(document.getElementById('physiqueExam').value) || 0;
+            const chimieTD = parseFloat(document.getElementById('chimieTD').value) || 0;
+            const chimieExam = parseFloat(document.getElementById('chimieExam').value) || 0;
+            const infoTP = parseFloat(document.getElementById('infoTP').value) || 0;
+            const infoExam = parseFloat(document.getElementById('infoExam').value) || 0;
+            const tpChimie = parseFloat(document.getElementById('tpChimie').value) || 0;
+            const tpPhysique = parseFloat(document.getElementById('tpPhysique').value) || 0;
+            const mst = parseFloat(document.getElementById('mst').value) || 0;
+            const mdr = parseFloat(document.getElementById('mdr').value) || 0;
+            const ethique = parseFloat(document.getElementById('ethique').value) || 0;
+            const english = parseFloat(document.getElementById('english').value) || 0;
+            const francais = parseFloat(document.getElementById('francais').value) || 0;
+
+            const mathScore = calculateModuleScore(mathTD, mathExam);
+            const physiqueScore = calculateModuleScore(physiqueTD, physiqueExam);
+            const chimieScore = calculateModuleScore(chimieTD, chimieExam);
+            const infoScore = calculateModuleScore(infoTP, infoExam);
+
+            const mathWeighted = mathScore * COEF_MATH;
+            const physiqueWeighted = physiqueScore * COEF_PHYSIQUE;
+            const chimieWeighted = chimieScore * COEF_CHIMIE;
+            const infoWeighted = infoScore * COEF_INFO;
+
+            // Create printable HTML content
+            let pdfContent = `
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>كشف النقاط - UniMoy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 40px 20px; 
+            direction: rtl;
+            background: #0a0a0a;
+            background: radial-gradient(circle at 20% 20%, rgba(0, 217, 163, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 184, 138, 0.06) 0%, transparent 50%),
+            min-height: 100vh;
+        }
+        .pdf-container {
+            background: #222222;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #404040;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 40px;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00d9a3 0%, #009871 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f1419;
+            box-shadow: 0 4px 14px rgba(0, 217, 163, 0.3);
+        }
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d9a3 0%, #00b88a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { 
+            font-size: 16px; 
+            color: #b3b3b3;
+            font-weight: 400;
+            margin-top: 8px;
+        }
+        .info-section {
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .info-box {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            padding: 16px 20px;
+            border-radius: 14px;
+            color: #f5f5f9;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .info-box strong {
+            color: #00d9a3;
+            margin-left: 8px;
+        }
+        .modules-container {
+            margin-bottom: 30px;
+        }
+        .module-card {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .module-card:hover {
+            border-color: #00d9a3;
+            transform: translateX(-2px);
+        }
+        .module-card.custom {
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        .module-card.custom:hover {
+            border-color: #2563eb;
+        }
+        .module-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #f5f5f9;
+        }
+        .module-name .badge {
+            display: inline-block;
+            background: rgba(0, 217, 163, 0.15);
+            color: #00d9a3;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 8px;
+            border: 1px solid rgba(0, 217, 163, 0.25);
+        }
+        .module-name .custom-badge {
+            background: rgba(37, 99, 235, 0.15);
+            color: #2563eb;
+            border-color: rgba(37, 99, 235, 0.25);
+        }
+        .module-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #b3b3b3;
+            text-align: center;
+        }
+        .section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00d9a3;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #404040;
+        }
+        .total-card {
+            background: rgba(0, 217, 163, 0.12);
+            border: 3px solid #16a34a;
+            border-radius: 14px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+            margin-top: 16px;
+        }
+        .total-label {
+            font-size: 16px;
+            font-weight: 800;
+            color: #f5f5f9;
+        }
+        .total-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: #16a34a;
+            text-align: center;
+        }
+        .final-result { 
+            text-align: center; 
+            padding: 40px; 
+            background: linear-gradient(135deg, rgba(0, 217, 163, 0.12) 0%, rgba(0, 152, 113, 0.08) 100%);
+            border: 3px solid #16a34a;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 12px 40px rgba(0, 217, 163, 0.2);
+        }
+        .final-result h2 { 
+            font-size: 16px; 
+            color: #b3b3b3;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .final-result .value { 
+            font-size: 64px; 
+            color: #16a34a;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        .final-result p { 
+            font-size: 16px; 
+            color: #b3b3b3;
+            font-weight: 600;
+        }
+        .footer { 
+            text-align: center; 
+            margin-top: 30px; 
+            padding-top: 25px; 
+            border-top: 1px solid #404040;
+            color: #b3b3b3;
+            font-size: 13px;
+        }
+        .footer p {
+            margin-bottom: 8px;
+        }
+        @media print {
+            body { 
+                padding: 0; 
+                background: #fff;
+            }
+            .pdf-container {
+                background: #fff;
+                box-shadow: none;
+                max-width: 100%;
+                padding: 20px;
+                border: none;
+            }
+            .module-card, .info-box, .final-result, .total-card {
+                background: #fff !important;
+                border-color: #ddd !important;
+            }
+            .module-name, .total-label, .final-result h2 {
+                color: #333 !important;
+            }
+            .module-value, .subtitle, .footer {
+                color: #666 !important;
+            }
+            .logo-text, .module-name .badge, .total-value, .final-result .value {
+                color: #16a34a !important;
+            }
+            .info-box strong, .section-header {
+                color: #16a34a !important;
+            }
+            .final-result .value { font-size: 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-container">
+        <div class="header">
+            <div class="logo-section">
+                <div class="logo-icon">U</div>
+                <h1 class="logo-text">UniMoy</h1>
+            </div>
+            <p class="subtitle">كشف النقاط - حاسبة المعدل الجامعي الذكية</p>
+        </div>
+
+        <div class="info-section">
+            <div class="info-box"><strong>📅 التاريخ:</strong> ${new Date().toLocaleDateString('ar-DZ')}</div>
+            <div class="info-box"><strong>📚 الفصل الدراسي:</strong> ${new Date().getFullYear()}</div>
+        </div>
+
+        <div class="final-result">
+            <h2>معدل الفصل الدراسي</h2>
+            <div class="value">${finalAverage}</div>
+            <p>من 20</p>
+        </div>
+
+        <div class="modules-container">
+            <div class="section-header">الوحدات الدراسية</div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_MATH}</span> Math</div>
+                <div class="module-value">${mathScore.toFixed(2)}</div>
+                <div class="module-value">${mathWeighted.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_PHYSIQUE}</span> Physique</div>
+                <div class="module-value">${physiqueScore.toFixed(2)}</div>
+                <div class="module-value">${physiqueWeighted.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_CHIMIE}</span> Chimie</div>
+                <div class="module-value">${chimieScore.toFixed(2)}</div>
+                <div class="module-value">${chimieWeighted.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_INFO}</span> Informatique</div>
+                <div class="module-value">${infoScore.toFixed(2)}</div>
+                <div class="module-value">${infoWeighted.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> TP Chimie</div>
+                <div class="module-value">${tpChimie.toFixed(2)}</div>
+                <div class="module-value">${tpChimie.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> TP Physique</div>
+                <div class="module-value">${tpPhysique.toFixed(2)}</div>
+                <div class="module-value">${tpPhysique.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> MST</div>
+                <div class="module-value">${mst.toFixed(2)}</div>
+                <div class="module-value">${mst.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> MDR</div>
+                <div class="module-value">${mdr.toFixed(2)}</div>
+                <div class="module-value">${mdr.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> Éthique</div>
+                <div class="module-value">${ethique.toFixed(2)}</div>
+                <div class="module-value">${ethique.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> English</div>
+                <div class="module-value">${english.toFixed(2)}</div>
+                <div class="module-value">${english.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+            <div class="module-card">
+                <div class="module-name"><span class="badge">Coef. ${COEF_OTHER}</span> Français</div>
+                <div class="module-value">${francais.toFixed(2)}</div>
+                <div class="module-value">${francais.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+`;
+
+            // Add custom modules
+            let customTotalWeighted = 0;
+            let customTotalCoefficient = 0;
+
+            customModules.forEach(module => {
+                const hasAnyGrade = module.examGrade !== null || module.tdGrade !== null || module.tpGrade !== null;
+                if (hasAnyGrade && module.name.trim()) {
+                    const average = calculateCustomModuleAverage(module);
+                    const weighted = average * module.coefficient;
+                    customTotalWeighted += weighted;
+                    customTotalCoefficient += module.coefficient;
+                    
+                    pdfContent += `
+            <div class="module-card custom">
+                <div class="module-name"><span class="badge custom-badge">Coef. ${module.coefficient}</span> ${module.name} <small style="color: #2563eb;">(إضافي)</small></div>
+                <div class="module-value">${average.toFixed(2)}</div>
+                <div class="module-value">${weighted.toFixed(2)}</div>
+                <div class="module-value">-</div>
+            </div>
+`;
+                }
+            });
+
+            const totalCoef = BASE_TOTAL_COEFFICIENT + customTotalCoefficient;
+            const totalWeighted = parseFloat(document.getElementById('totalWeighted').textContent);
+
+            pdfContent += `
+            
+            <div class="total-card">
+                <div class="total-label">المجموع الكلي</div>
+                <div class="total-value">-</div>
+                <div class="total-value">${totalWeighted.toFixed(2)}</div>
+                <div class="total-value">Coef. ${totalCoef}</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>UniMoy &copy; ${new Date().getFullYear()} - حاسبة المعدل الجامعي الذكية</p>
+            <p>تم إنشاء هذا الكشف تلقائياً</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
+
+            // Open in new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(pdfContent);
+            printWindow.document.close();
+            
+            // Trigger print dialog
+            setTimeout(() => {
+                printWindow.print();
+            }, 500);
+        }
+
+        // Wait for DOM to be fully loaded before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event Listeners for main buttons
+            document.getElementById('addCustomModuleBtn').addEventListener('click', addCustomModule);
+            document.getElementById('calculateBtn').addEventListener('click', calculateCompleteAverage);
+            document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+            document.getElementById('downloadPdfBtn').addEventListener('click', generatePDF);
+            
+            // Back Button
+            document.getElementById('backButton').addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Theme Management
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const savedTheme = 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            if (savedTheme === 'light') {
+                themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+
+                if (newTheme === 'light') {
+                    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+                } else {
+                    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+                }
+            });
+        });
+
+        // Remove duplicate declarations and event listeners
+        /*
+        document.getElementById('calculateBtn').addEventListener('click', () => {
+            // Get all input values
+            const mathTD = parseFloat(document.getElementById('mathTD').value) || 0;
+            const mathExam = parseFloat(document.getElementById('mathExam').value) || 0;
+            const physiqueTD = parseFloat(document.getElementById('physiqueTD').value) || 0;
+            const physiqueExam = parseFloat(document.getElementById('physiqueExam').value) || 0;
+            const chimieTD = parseFloat(document.getElementById('chimieTD').value) || 0;
+            const chimieExam = parseFloat(document.getElementById('chimieExam').value) || 0;
+            const infoTP = parseFloat(document.getElementById('infoTP').value) || 0;
+            const infoExam = parseFloat(document.getElementById('infoExam').value) || 0;
+            const tpChimie = parseFloat(document.getElementById('tpChimie').value) || 0;
+            const tpPhysique = parseFloat(document.getElementById('tpPhysique').value) || 0;
+            const mst = parseFloat(document.getElementById('mst').value) || 0;
+            const mdr = parseFloat(document.getElementById('mdr').value) || 0;
+            const ethique = parseFloat(document.getElementById('ethique').value) || 0;
+            const english = parseFloat(document.getElementById('english').value) || 0;
+            const francais = parseFloat(document.getElementById('francais').value) || 0;
+
+            // Check if at least one field is filled
+            const allInputs = [mathTD, mathExam, physiqueTD, physiqueExam, chimieTD, chimieExam, 
+                              infoTP, infoExam, tpChimie, tpPhysique, mst, mdr, ethique, english, francais];
+            const hasInput = allInputs.some(val => val > 0);
+
+            if (!hasInput) {
+                showError('يرجى إدخال درجة واحدة على الأقل');
+                return;
+            }
+
+            // Calculate module scores
+            const mathScore = calculateModuleScore(mathTD, mathExam);
+            const physiqueScore = calculateModuleScore(physiqueTD, physiqueExam);
+            const chimieScore = calculateModuleScore(chimieTD, chimieExam);
+            const infoScore = calculateModuleScore(infoTP, infoExam);
+
+            // Calculate weighted scores (score × coefficient)
+            const mathWeighted = mathScore * COEF_MATH;
+            const physiqueWeighted = physiqueScore * COEF_PHYSIQUE;
+            const chimieWeighted = chimieScore * COEF_CHIMIE;
+            const infoWeighted = infoScore * COEF_INFO;
+
+            // Other modules (coefficient 1 each)
+            const otherModulesWeighted = tpChimie + tpPhysique + mst + mdr + ethique + english + francais;
+
+            // Display module results
+            document.getElementById('mathResultValue').textContent = mathWeighted.toFixed(2);
+            document.getElementById('mathResult').classList.add('show');
+
+            document.getElementById('physiqueResultValue').textContent = physiqueWeighted.toFixed(2);
+            document.getElementById('physiqueResult').classList.add('show');
+
+            document.getElementById('chimieResultValue').textContent = chimieWeighted.toFixed(2);
+            document.getElementById('chimieResult').classList.add('show');
+
+            document.getElementById('infoResultValue').textContent = infoWeighted.toFixed(2);
+            document.getElementById('infoResult').classList.add('show');
+
+            // Calculate final semester average
+            const totalWeightedScore = mathWeighted + physiqueWeighted + chimieWeighted + 
+                                      infoWeighted + otherModulesWeighted;
+            const semesterAverage = totalWeightedScore / TOTAL_COEFFICIENT;
+
+            // Display final result
+            document.getElementById('finalResultValue').textContent = semesterAverage.toFixed(2);
+            document.getElementById('finalResultCard').classList.add('show');
+
+            // Scroll to result
+            document.getElementById('finalResultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+        */
+
+        // Reset Button - Remove duplicate, already added above
+        /*
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            // Reset all input fields
+            document.querySelectorAll('.input-field').forEach(input => {
+                input.value = '';
+            });
+
+            // Hide all results
+            document.querySelectorAll('.module-result').forEach(result => {
+                result.classList.remove('show');
+            });
+
+            document.getElementById('finalResultCard').classList.remove('show');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        */
+
+        // Save Results Button - Remove (button doesn't exist in new design)
+        /*
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const finalResult = document.getElementById('finalResultValue').textContent;
+            
+            if (finalResult === '0.00') {
+                showError('لا توجد نتائج لحفظها. قم بحساب المعدل أولاً');
+                return;
+            }
+
+            // Save to localStorage
+            const saveData = {
+                date: new Date().toISOString(),
+                average: finalResult,
+                modules: {
+                    math: {
+                        td: document.getElementById('mathTD').value,
+                        exam: document.getElementById('mathExam').value
+                    },
+                    physique: {
+                        td: document.getElementById('physiqueTD').value,
+                        exam: document.getElementById('physiqueExam').value
+                    },
+                    chimie: {
+                        td: document.getElementById('chimieTD').value,
+                        exam: document.getElementById('chimieExam').value
+                    },
+                    informatique: {
+                        tp: document.getElementById('infoTP').value,
+                        exam: document.getElementById('infoExam').value
+                    },
+                    other: {
+                        tpChimie: document.getElementById('tpChimie').value,
+                        tpPhysique: document.getElementById('tpPhysique').value,
+                        mst: document.getElementById('mst').value,
+                        mdr: document.getElementById('mdr').value,
+                        ethique: document.getElementById('ethique').value,
+                        english: document.getElementById('english').value,
+                        francais: document.getElementById('francais').value
+                    }
+                }
+            };
+
+            localStorage.setItem('unimoy-last-calculation', JSON.stringify(saveData));
+            
+            // Show success message
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.style.background = 'rgba(22, 163, 74, 0.1)';
+            errorMessage.style.borderColor = 'var(--color-success)';
+            errorMessage.style.color = 'var(--color-success)';
+            errorMessage.textContent = 'تم حفظ النتائج بنجاح!';
+            errorMessage.classList.add('show');
+            
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+                errorMessage.style.background = 'rgba(239, 68, 68, 0.1)';
+                errorMessage.style.borderColor = 'var(--color-error)';
+                errorMessage.style.color = 'var(--color-error)';
+            }, 3000);
+        });
+
+        // Load saved data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem('unimoy-last-calculation');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    
+                    // Restore Math values
+                    if (data.modules.math) {
+                        document.getElementById('mathTD').value = data.modules.math.td || '';
+                        document.getElementById('mathExam').value = data.modules.math.exam || '';
+                    }
+                    
+                    // Restore Physique values
+                    if (data.modules.physique) {
+                        document.getElementById('physiqueTD').value = data.modules.physique.td || '';
+                        document.getElementById('physiqueExam').value = data.modules.physique.exam || '';
+                    }
+                    
+                    // Restore Chimie values
+                    if (data.modules.chimie) {
+                        document.getElementById('chimieTD').value = data.modules.chimie.td || '';
+                        document.getElementById('chimieExam').value = data.modules.chimie.exam || '';
+                    }
+                    
+                    // Restore Informatique values
+                    if (data.modules.informatique) {
+                        document.getElementById('infoTP').value = data.modules.informatique.tp || '';
+                        document.getElementById('infoExam').value = data.modules.informatique.exam || '';
+                    }
+                    
+                    // Restore Other modules values
+                    if (data.modules.other) {
+                        document.getElementById('tpChimie').value = data.modules.other.tpChimie || '';
+                        document.getElementById('tpPhysique').value = data.modules.other.tpPhysique || '';
+                        document.getElementById('mst').value = data.modules.other.mst || '';
+                        document.getElementById('mdr').value = data.modules.other.mdr || '';
+                        document.getElementById('ethique').value = data.modules.other.ethique || '';
+                        document.getElementById('english').value = data.modules.other.english || '';
+                        document.getElementById('francais').value = data.modules.other.francais || '';
+                    }
+                } catch (e) {
+                    console.error('خطأ في تحميل البيانات المحفوظة:', e);
+                }
+            }
+        });
+        */
+    </script>
+</body>
+</html>

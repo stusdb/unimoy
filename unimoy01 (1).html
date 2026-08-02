@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniMoy - حاسبة المعدل الجامعي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg-primary: #0a0a0a;
+            --color-bg-secondary: #1a1a1a;
+            --color-bg-card: #222222;
+            --color-accent-red: #dc2626;
+            --color-accent-blue: #2563eb;
+            --color-accent-green: #16a34a;
+            --color-accent-hover-red: #b91c1c;
+            --color-accent-hover-blue: #1d4ed8;
+            --color-accent-hover-green: #15803d;
+            --color-text-primary: #f5f5f9;
+            --color-text-secondary: #b3b3b3;
+            --color-border: #404040;
+            --color-error: #ef4444;
+            --color-success: #16a34a;
+            --color-warning: #eab308;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --color-bg-primary: #f8fafc;
+            --color-bg-secondary: #ffffff;
+            --color-bg-card: #ffffff;
+            --color-accent-red: #ef4444;
+            --color-accent-blue: #3b82f6;
+            --color-accent-green: #22c55e;
+            --color-accent-hover-red: #dc2626;
+            --color-accent-hover-blue: #2563eb;
+            --color-accent-hover-green: #16a34a;
+            --color-text-primary: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-border: #e2e8f0;
+            --color-error: #dc2626;
+            --color-success: #16a34a;
+            --color-warning: #eab308;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        .background-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(0, 217, 163, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 184, 138, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 30px 0;
+            text-align: center;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00d9a3 0%, #009871 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 217, 163, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+            border-radius: 12px;
+        }
+
+        .logo-icon svg {
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d9a3 0%, #00b88a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-message {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            border-color: var(--color-accent-green);
+        }
+
+        .theme-toggle svg,
+        .help-button svg {
+            color: var(--color-text-primary);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover svg,
+        .help-button:hover svg {
+            color: var(--color-accent-green);
+        }
+
+        .help-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-button:hover {
+            transform: scale(1.1);
+            border-color: var(--color-accent-green);
+        }
+
+        main {
+            flex: 1;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .card {
+            background: var(--color-bg-card);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--color-text-primary);
+        }
+
+        select {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 16px;
+            color: var(--color-text-primary);
+            font-size: 16px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 18px center;
+            position: relative;
+        }
+
+        select option {
+            padding: 16px 20px;
+            font-size: 15px;
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            border-radius: 8px;
+            margin: 4px 0;
+        }
+
+        [data-theme="light"] select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        }
+
+        select:hover {
+            border-color: #00d9a3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 217, 163, 0.15);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15), 0 8px 20px rgba(0, 217, 163, 0.2);
+            transform: translateY(-2px);
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            animation: shake 0.4s ease-out;
+        }
+
+        .error-message svg {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--color-accent-green) 0%, var(--color-accent-hover-green) 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-accent-hover-green) 0%, #15803d 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(22, 163, 74, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--color-text-primary);
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-accent-blue);
+            color: var(--color-accent-blue);
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-bg-card);
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .close-modal {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: var(--transition);
+            color: var(--color-text-secondary);
+        }
+
+        .close-modal:hover {
+            background: var(--color-error);
+            color: white;
+            border-color: var(--color-error);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .modal-body h3 {
+            color: var(--color-text-primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .modal-body ul {
+            list-style: none;
+            padding-right: 0;
+        }
+
+        .modal-body li {
+            padding: 8px 0;
+            padding-right: 24px;
+            position: relative;
+        }
+
+        .modal-body li::before {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: var(--color-accent-green);
+            font-weight: 700;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .logo-text {
+                font-size: 28px;
+            }
+
+            .logo-icon {
+                width: 42px;
+                height: 42px;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+
+            .theme-toggle,
+            .help-button {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            header {
+                padding: 20px 0;
+            }
+        }
+
+        .feature-highlight {
+            background: rgba(22, 163, 74, 0.05);
+            border: 1px solid rgba(22, 163, 74, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            margin-top: 24px;
+        }
+
+        .feature-highlight h4 {
+            color: var(--color-accent-green);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-highlight p {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .feature-card {
+            background: rgba(0, 217, 163, 0.05);
+            border: 1px solid rgba(0, 217, 163, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 163, 0.15), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 217, 163, 0.25);
+            border-color: rgba(0, 217, 163, 0.4);
+        }
+
+        .feature-card svg {
+            margin-bottom: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover svg {
+            transform: scale(1.15) rotate(5deg);
+            filter: drop-shadow(0 4px 8px rgba(0, 217, 163, 0.4));
+        }
+
+        .feature-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover h4 {
+            color: var(--color-accent-green);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .feature-card:nth-child(1) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+
+        .feature-card:nth-child(2) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+
+        .feature-card:nth-child(3) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+
+        .feature-card:nth-child(4) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+
+        .feature-card:nth-child(5) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        .feature-card:nth-child(6) {
+            animation: float 3s ease-in-out infinite;
+            animation-delay: 2.5s;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 16px;
+            color: var(--color-text-primary);
+            font-size: 16px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 18px center;
+            position: relative;
+        }
+
+        .custom-select:hover {
+            border-color: #00d9a3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 217, 163, 0.15);
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15), 0 8px 20px rgba(0, 217, 163, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .custom-select option {
+            padding: 16px 20px;
+            font-size: 15px;
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: all 0.2s ease;
+        }
+
+        .custom-select option:hover {
+            background: rgba(0, 217, 163, 0.1);
+            color: var(--color-accent-green);
+        }
+
+        .select-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--color-accent-green);
+        }
+
+        .custom-select:focus ~ .select-icon {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .custom-select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .stepper-container {
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--color-border);
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            counter-reset: step;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            right: 20%;
+            left: 20%;
+            height: 3px;
+            background: var(--color-border);
+            z-index: 0;
+            transition: all 0.5s ease;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 24px;
+            right: 20%;
+            height: 3px;
+            background: linear-gradient(270deg, var(--color-accent-green), #00d9a3);
+            z-index: 1;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(0, 217, 163, 0.5);
+            transform-origin: right;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            cursor: default;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--color-bg-card);
+            border: 3px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-circle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--color-accent-green), #00d9a3);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-circle-content {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            border-color: var(--color-accent-green);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(0, 217, 163, 0.2), 0 4px 12px rgba(0, 217, 163, 0.3);
+        }
+
+        .step.active .step-circle::before {
+            transform: scale(1);
+        }
+
+        .step.active .step-circle-content {
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background: linear-gradient(135deg, var(--color-accent-green), #00d9a3);
+            border-color: var(--color-accent-green);
+            color: white;
+        }
+
+        .step.completed .step-circle-content {
+            color: white;
+        }
+
+        .step-label {
+            margin-top: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+            max-width: 100px;
+            line-height: 1.3;
+        }
+
+        .step.active .step-label {
+            color: var(--color-accent-green);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .step.completed .step-label {
+            color: var(--color-text-primary);
+            opacity: 1;
+        }
+
+        .step-icon {
+            display: none;
+        }
+
+        .step.completed .step-icon {
+            display: block;
+        }
+
+        .step.completed .step-number {
+            display: none;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0) rotate(-45deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(-45deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .step.completed .step-icon {
+            animation: checkmark 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .step.active .step-circle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--color-accent-green);
+            border-radius: 50%;
+            animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @media (max-width: 640px) {
+            .stepper-container {
+                padding: 16px;
+            }
+
+            .step-circle {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .step-label {
+                font-size: 11px;
+                max-width: 70px;
+            }
+
+            .stepper::before {
+                right: 15%;
+                left: 15%;
+            }
+
+            .stepper-progress {
+                right: 15%;
+            }
+        }
+
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-dropdown-trigger {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 16px;
+            color: var(--color-text-primary);
+            font-size: 16px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            user-select: none;
+        }
+
+        .custom-dropdown-trigger:hover {
+            border-color: #00d9a3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 217, 163, 0.15);
+        }
+
+        .custom-dropdown-trigger.active {
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15), 0 8px 20px rgba(0, 217, 163, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .custom-dropdown-trigger.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .custom-dropdown-arrow {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--color-accent-green);
+        }
+
+        .custom-dropdown-trigger.active .custom-dropdown-arrow {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .custom-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--color-bg-card);
+            border: 2px solid var(--color-border);
+            border-radius: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .custom-dropdown-menu::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-dropdown-menu::-webkit-scrollbar-track {
+            background: var(--color-bg-secondary);
+            border-radius: 10px;
+        }
+
+        .custom-dropdown-menu::-webkit-scrollbar-thumb {
+            background: var(--color-accent-green);
+            border-radius: 10px;
+        }
+
+        .custom-dropdown-menu::-webkit-scrollbar-thumb:hover {
+            background: var(--color-accent-hover-green);
+        }
+
+        .custom-dropdown-option {
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-dropdown-option:hover {
+            background: rgba(0, 217, 163, 0.1);
+            color: var(--color-accent-green);
+        }
+
+        .custom-dropdown-option.selected {
+            background: rgba(0, 217, 163, 0.15);
+            color: var(--color-accent-green);
+            font-weight: 600;
+        }
+
+        .custom-dropdown-option.selected::before {
+            content: '✓';
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        .custom-dropdown-option:first-child {
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+        }
+
+        .custom-dropdown-option:last-child {
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-dropdown-option {
+            animation: slideDown 0.2s ease-out backwards;
+        }
+
+        .custom-dropdown-option:nth-child(1) { animation-delay: 0.02s; }
+        .custom-dropdown-option:nth-child(2) { animation-delay: 0.04s; }
+        .custom-dropdown-option:nth-child(3) { animation-delay: 0.06s; }
+        .custom-dropdown-option:nth-child(4) { animation-delay: 0.08s; }
+        .custom-dropdown-option:nth-child(5) { animation-delay: 0.10s; }
+
+        .dropdown-search {
+            position: sticky;
+            top: 0;
+            padding: 12px;
+            background: var(--color-bg-card);
+            border-bottom: 1px solid var(--color-border);
+            z-index: 10;
+        }
+
+        .dropdown-search input {
+            width: 100%;
+            padding: 10px 40px 10px 16px;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            color: var(--color-text-primary);
+            font-size: 14px;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-search input:focus {
+            outline: none;
+            border-color: var(--color-accent-green);
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .dropdown-search-icon {
+            position: absolute;
+            left: 24px;
+            top: 22px;
+            color: var(--color-text-secondary);
+            pointer-events: none;
+        }
+
+        .custom-dropdown-option .option-icon {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-secondary);
+            border-radius: 6px;
+            margin-left: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-dropdown-option:hover .option-icon {
+            background: rgba(0, 217, 163, 0.2);
+        }
+
+        .custom-dropdown-option.selected .option-icon {
+            background: rgba(0, 217, 163, 0.25);
+        }
+
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-gradient"></div>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="themeIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <button class="help-button" id="helpButton" aria-label="مساعدة">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0f1419" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                </div>
+                <h1 class="logo-text">UniMoy</h1>
+            </div>
+            <p class="welcome-message">احسب معدلك الجامعي بسهولة ودقة</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="stepper-container">
+                    <div class="stepper">
+                        <div class="stepper-progress" id="stepperProgress"></div>
+                        
+                        <div class="step active" data-step="1">
+                            <div class="step-circle">
+                                <span class="step-circle-content">
+                                    <span class="step-number">1</span>
+                                    <svg class="step-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="step-label">الكلية</div>
+                        </div>
+
+                        <div class="step" data-step="2">
+                            <div class="step-circle">
+                                <span class="step-circle-content">
+                                    <span class="step-number">2</span>
+                                    <svg class="step-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="step-label">السنة</div>
+                        </div>
+
+                        <div class="step" data-step="3">
+                            <div class="step-circle">
+                                <span class="step-circle-content">
+                                    <span class="step-number">3</span>
+                                    <svg class="step-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="step-label">التخصص</div>
+                        </div>
+
+                        <div class="step" data-step="4">
+                            <div class="step-circle">
+                                <span class="step-circle-content">
+                                    <span class="step-number">4</span>
+                                    <svg class="step-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="step-label">الفصل</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <strong>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        تنبيه:
+                    </strong> <span id="errorText"></span>
+                </div>
+
+                <form id="calculatorForm">
+                    <div class="form-group">
+                        <label for="faculty">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Faculté:</span>
+                        </label>
+                        <div class="custom-dropdown" id="facultyDropdown">
+                            <div class="custom-dropdown-trigger" id="facultyTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span id="facultyLabel">-- اختر الكلية --</span>
+                                <svg class="custom-dropdown-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                            <div class="custom-dropdown-menu" id="facultyMenu" role="listbox"></div>
+                        </div>
+                        <input type="hidden" id="faculty" name="faculty" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="academicYear">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span>Année:</span>
+                        </label>
+                        <div class="custom-dropdown" id="academicYearDropdown">
+                            <div class="custom-dropdown-trigger disabled" id="academicYearTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span id="academicYearLabel">-- اختر الكلية أولاً --</span>
+                                <svg class="custom-dropdown-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                            <div class="custom-dropdown-menu" id="academicYearMenu" role="listbox"></div>
+                        </div>
+                        <input type="hidden" id="academicYear" name="academicYear" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specialization">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                            <span>Spécialité:</span>
+                        </label>
+                        <div class="custom-dropdown" id="specializationDropdown">
+                            <div class="custom-dropdown-trigger disabled" id="specializationTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span id="specializationLabel">-- اختر السنة أولاً --</span>
+                                <svg class="custom-dropdown-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                            <div class="custom-dropdown-menu" id="specializationMenu" role="listbox"></div>
+                        </div>
+                        <input type="hidden" id="specialization" name="specialization" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="semester">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Semestre:</span>
+                        </label>
+                        <div class="custom-dropdown" id="semesterDropdown">
+                            <div class="custom-dropdown-trigger disabled" id="semesterTrigger" tabindex="0" role="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span id="semesterLabel">-- اختر التخصص أولاً --</span>
+                                <svg class="custom-dropdown-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </div>
+                            <div class="custom-dropdown-menu" id="semesterMenu" role="listbox"></div>
+                        </div>
+                        <input type="hidden" id="semester" name="semester" required>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <span>Start Calculation</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; margin-right: 8px; vertical-align: middle;">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <button type="button" class="btn-secondary" id="aboutButton">
+                        <span>حول التطبيق</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; margin-right: 6px; vertical-align: middle;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="feature-highlight">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>نصيحة سريعة</span>
+                    </h4>
+                    <p>سيتم حفظ اختياراتك تلقائياً وإعادة تحميلها عند فتح التطبيق في المرة القادمة</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 24px;">
+                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: var(--color-text-primary);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 8px;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span>مميزات UniMoy</span>
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        <h4>Auto Save</h4>
+                        <p>جميع بياناتك يتم حفظها تلقائياً</p>
+                    </div>
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <h4>19 Facultés Algériennes</h4>
+                        <p>دعم شامل لجميع التخصصات</p>
+                    </div>
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                        </svg>
+                        <h4>Dark & Light Mode</h4>
+                        <p>اختر المظهر الذي يناسب عينيك</p>
+                    </div>
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        <h4>Compatible</h4>
+                        <p>يعمل على الهواتف والحواسيب</p>
+                    </div>
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <h4>High Accuracy</h4>
+                        <p>حساب دقيق وفق نظام LMD</p>
+                    </div>
+                    <div class="feature-card">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                        </svg>
+                        <h4>Easy to Use</h4>
+                        <p>واجهة بسيطة وواضحة</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>UniMoy &copy; 2026 - حاسبة المعدل الجامعي الذكية</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">عن تطبيق UniMoy</h2>
+                <button class="close-modal" id="closeAboutModal" aria-label="إغلاق">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>UniMoy</strong> هو موقع ويب ذكي لحساب المعدل الجامعي مصمم خصيصاً للطلاب الجزائريين.</p>
+                
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    المميزات الحالية:
+                </h3>
+                <ul>
+                    <li>حساب المعدل بدقة عالية</li>
+                    <li>دعم جميع التخصصات الجامعية</li>
+                    <li>واجهة عصرية وسهلة الاستخدام</li>
+                    <li>حفظ تلقائي للبيانات</li>
+                    <li>وضع مظلم ومضيء</li>
+                    <li>متوافق مع الهواتف والحواسيب</li>
+                </ul>
+
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                    </svg>
+                    مميزات قادمة:
+                </h3>
+                <ul>
+                    <li>حساب المعدل التراكمي للسنوات المتعددة</li>
+                    <li>رسومات بيانية لتحليل الأداء</li>
+                    <li>مزامنة سحابية للبيانات</li>
+                    <li>تذكيرات الامتحانات</li>
+                    <li>مشاركة النتائج عبر وسائل التواصل</li>
+                </ul>
+
+                <div class="feature-highlight">
+                    <h4>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        تواصل معنا
+                    </h4>
+                    <p>نحن نرحب بملاحظاتك واقتراحاتك لتحسين الموقع</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">المساعدة - كيفية الاستخدام</h2>
+                <button class="close-modal" id="closeHelpModal" aria-label="إغلاق">×</button>
+            </div>
+            <div class="modal-body">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    خطوات بسيطة للبدء:
+                </h3>
+                <ul>
+                    <li><strong>اختر الكلية:</strong> حدد كليتك من القائمة المنسدلة</li>
+                    <li><strong>اختر السنة:</strong> حدد السنة الدراسية الحالية</li>
+                    <li><strong>اختر التخصص:</strong> حدد تخصصك الجامعي</li>
+                    <li><strong>ابدأ الحساب:</strong> اضغط على الزر للانتقال لصفحة إدخال المواد</li>
+                </ul>
+
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    حفظ البيانات:
+                </h3>
+                <p>يتم حفظ اختياراتك تلقائياً على جهازك. عند فتح الموقع مرة أخرى، ستجد آخر اختياراتك محفوظة.</p>
+
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    تبديل المظهر:
+                </h3>
+                <p>استخدم زر القمر/الشمس في أعلى الصفحة للتبديل بين الوضع المظلم والمضيء حسب راحتك.</p>
+
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    ملاحظات مهمة:
+                </h3>
+                <ul>
+                    <li>تأكد من اختيار جميع الحقول قبل المتابعة</li>
+                    <li>يمكنك تغيير اختياراتك في أي وقت</li>
+                    <li>البيانات محفوظة محلياً على جهازك فقط</li>
+                </ul>
+
+                <div class="feature-highlight">
+                    <h4>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 6px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        نصيحة
+                    </h4>
+                    <p>للحصول على أفضل تجربة، استخدم الموقع على متصفح حديث مثل Chrome أو Firefox على الهاتف أو الكمبيوتر</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const academicStructure = {
+            'technology': {
+                'L1': ['Science and Technology (ST)'],
+                'L2': ['Electronics', 'Automatic', 'Civil Engineering'],
+                'L3': ['Electronics', 'Automatic', 'Civil Engineering'],
+                'M1': ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering'],
+                'M2': ['Civil Engineering', 'Mechanical Engineering', 'Electrical Engineering']
+            },
+            'natural_life': {
+                'L1': ['Sciences de la Nature et de la Vie (SNV)'],
+                'L2': ['Sciences Biologiques', 'Biochimie', 'Écologie et Environnement'],
+                'L3': ['Microbiologie', 'Biotechnologie et Santé', 'Génétique'],
+                'M1': ['Sciences Biologiques', 'Biochimie', 'Écologie et Environnement'],
+                'M2': ['Microbiologie Appliquée', 'Biotechnologie', 'Biodiversité']
+            },
+            'exact_sciences': {
+                'L1': ['Sciences et Technologie (ST)', 'Mathématiques-Informatique (MI)'],
+                'L2': ['Mathématiques', 'Physique', 'Chimie', 'Informatique'],
+                'L3': ['Mathématiques', 'Physique', 'Chimie', 'Informatique'],
+                'M1': ['Mathématiques Appliquées', 'Physique des Matériaux', 'Informatique'],
+                'M2': ['Mathématiques Appliquées', 'Physique Théorique', 'Systèmes Informatiques']
+            },
+            'economics': {
+                'L1': ['Sciences Économiques et Gestion (SEG)'],
+                'L2': ['Sciences de Gestion', 'Économie', 'Sciences Commerciales'],
+                'L3': ['Management', 'Finance', 'Marketing', 'Comptabilité'],
+                'M1': ['Management', 'Finance', 'Marketing', 'Comptabilité'],
+                'M2': ['Finance d\'Entreprise', 'Marketing des Services', 'Comptabilité et Audit']
+            },
+            'humanities': {
+                'L1': ['Sciences Sociales'],
+                'L2': ['Sociologie', 'Psychologie', 'Philosophie'],
+                'L3': ['Sociologie', 'Psychologie', 'Philosophie'],
+                'M1': ['Sociologie', 'Psychologie Clinique', 'Philosophie'],
+                'M2': ['Sociologie Urbaine', 'Psychologie du Travail', 'Philosophie Occidentale']
+            },
+            'medicine': {
+                'L1': ['Médecine'],
+                'L2': ['Médecine'],
+                'L3': ['Médecine'],
+                'M1': ['Médecine Générale', 'Chirurgie Générale'],
+                'M2': ['Médecine Interne', 'Pédiatrie', 'Chirurgie']
+            },
+            'letters': {
+                'L1': ['Lettres et Langues'],
+                'L2': ['Langue et Littérature Arabes', 'Langue Française', 'Langue Anglaise'],
+                'L3': ['Littérature Arabe', 'Littérature Française', 'Traduction'],
+                'M1': ['Littérature Arabe', 'Didactique des Langues', 'Traduction'],
+                'M2': ['Littérature Contemporaine', 'Sciences du Langage', 'Traduction Scientifique']
+            },
+            'law': {
+                'L1': ['Droit'],
+                'L2': ['Droit Public', 'Droit Privé'],
+                'L3': ['Droit Public', 'Droit Privé', 'Sciences Politiques'],
+                'M1': ['Droit Public', 'Droit Privé', 'Sciences Politiques'],
+                'M2': ['Droit International', 'Droit des Affaires', 'Relations Internationales']
+            },
+            'earth_sciences': {
+                'L1': ['Sciences de la Terre et de l\'Univers'],
+                'L2': ['Géologie', 'Géographie'],
+                'L3': ['Géologie', 'Géographie et Aménagement'],
+                'M1': ['Géologie des Ressources', 'Géographie'],
+                'M2': ['Hydrogéologie', 'Aménagement du Territoire']
+            },
+            'architecture': {
+                'L1': ['Architecture'],
+                'L2': ['Architecture'],
+                'L3': ['Architecture'],
+                'M1': ['Architecture', 'Urbanisme'],
+                'M2': ['Architecture et Développement Durable', 'Planification Urbaine']
+            },
+            'agronomy': {
+                'L1': ['Sciences Agronomiques'],
+                'L2': ['Production Végétale', 'Production Animale'],
+                'L3': ['Production Végétale', 'Production Animale', 'Sciences Forestières'],
+                'M1': ['Sciences Agronomiques', 'Production Animale'],
+                'M2': ['Protection des Végétaux', 'Économie Rurale']
+            },
+            'veterinary': {
+                'L1': ['Sciences Vétérinaires'],
+                'L2': ['Sciences Vétérinaires'],
+                'L3': ['Sciences Vétérinaires'],
+                'M1': ['Médecine Vétérinaire', 'Santé Animale'],
+                'M2': ['Santé Publique Vétérinaire', 'Production Animale']
+            },
+            'pharmacy': {
+                'L1': ['Pharmacie'],
+                'L2': ['Pharmacie'],
+                'L3': ['Pharmacie'],
+                'M1': ['Pharmacie', 'Chimie Pharmaceutique'],
+                'M2': ['Pharmacie Industrielle', 'Pharmacie Clinique']
+            },
+            'dentistry': {
+                'L1': ['Chirurgie Dentaire'],
+                'L2': ['Chirurgie Dentaire'],
+                'L3': ['Chirurgie Dentaire'],
+                'M1': ['Médecine Dentaire', 'Orthodontie'],
+                'M2': ['Pathologie Bucco-Dentaire']
+            },
+            'islamic': {
+                'L1': ['Sciences Islamiques'],
+                'L2': ['Charia', 'Usul Ad-Din'],
+                'L3': ['Charia et Droit', 'Études Islamiques'],
+                'M1': ['Fiqh et ses Fondements', 'Civilisation Islamique'],
+                'M2': ['Fiqh Comparé', 'Histoire Islamique']
+            },
+            'information': {
+                'L1': ['Sciences de l\'Information et Communication'],
+                'L2': ['Journalisme', 'Communication'],
+                'L3': ['Journalisme Écrit', 'Communication et Relations Publiques'],
+                'M1': ['Journalisme', 'Communication'],
+                'M2': ['Journalisme Électronique', 'Audiovisuel']
+            },
+            'arts': {
+                'L1': ['Arts'],
+                'L2': ['Beaux-Arts', 'Arts Plastiques'],
+                'L3': ['Peinture', 'Sculpture', 'Design Graphique'],
+                'M1': ['Arts Plastiques', 'Design'],
+                'M2': ['Arts Décoratifs']
+            },
+            'sports': {
+                'L1': ['STAPS'],
+                'L2': ['Éducation Physique', 'Entraînement Sportif'],
+                'L3': ['STAPS', 'Entraînement Sportif'],
+                'M1': ['Éducation Motrice', 'Administration Sportive'],
+                'M2': ['Entraînement Sportif de Haut Niveau']
+            },
+            'maritime': {
+                'L1': ['Sciences Maritimes'],
+                'L2': ['Navigation Maritime', 'Génie Maritime'],
+                'L3': ['Navigation Maritime', 'Génie Maritime'],
+                'M1': ['Sciences Navales', 'Propulsion Navale'],
+                'M2': ['Architecture Navale', 'Hydrodynamique']
+            }
+        };
+
+        const calculationPages = {
+            'technology_L1_Science and Technology (ST)_1': 'https://arshifx-site.netlify.app',
+            'technology_L1_Science and Technology (ST)_2': 'pages/tech-l1-st-sem2.html',
+            'exact_sciences_L1_Mathématiques-Informatique (MI)_1': 'pages/sci-l1-mi-sem1.html',
+            'exact_sciences_L1_Mathématiques-Informatique (MI)_2': 'pages/sci-l1-mi-sem2.html',
+            'economics_L1_Sciences Économiques et Gestion (SEG)_1': 'pages/econ-l1-seg-sem1.html',
+            'economics_L1_Sciences Économiques et Gestion (SEG)_2': 'pages/econ-l1-seg-sem2.html'
+        };
+
+        function createPageKey(faculty, year, specialization, semester) {
+            return `${faculty}_${year}_${specialization}_${semester}`;
+        }
+
+        function findCalculationPage(faculty, year, specialization, semester) {
+            const fullKey = createPageKey(faculty, year, specialization, semester);
+            return calculationPages[fullKey] || null;
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const faculty = document.getElementById('faculty').value;
+            const specialization = document.getElementById('specialization').value;
+            const academicYear = document.getElementById('academicYear').value;
+            const semester = document.getElementById('semester').value;
+
+            if (!faculty || !specialization || !academicYear || !semester) {
+                showError('يرجى إكمال جميع الحقول قبل المتابعة');
+                return;
+            }
+
+            localStorage.setItem('unimoy-faculty', faculty);
+            localStorage.setItem('unimoy-specialization', specialization);
+            localStorage.setItem('unimoy-academicYear', academicYear);
+            localStorage.setItem('unimoy-semester', semester);
+
+            const pageUrl = findCalculationPage(faculty, academicYear, specialization, semester);
+            
+            if (pageUrl) {
+                const submitBtn = e.target.querySelector('.btn-primary');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span>جاري التحميل...</span>';
+                submitBtn.disabled = true;
+                setTimeout(() => { window.location.href = pageUrl; }, 1000);
+            } else {
+                showError(`صفحة الحساب لـ "${specialization}" غير متوفرة حالياً. سيتم إضافتها قريباً.`);
+            }
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            errorMessage.style.animation = 'none';
+            setTimeout(() => { errorMessage.style.animation = 'shake 0.4s ease-out'; }, 10);
+            setTimeout(() => { errorMessage.classList.remove('show'); }, 5000);
+        }
+
+        document.getElementById('calculatorForm').addEventListener('submit', handleFormSubmit);
+
+        const facultyData = [
+            { value: 'technology', label: 'Faculté de Technologie', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path><circle cx="12" cy="12" r="3"></circle></svg>' },
+            { value: 'natural_life', label: 'Sciences de la Nature et de la Vie', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>' },
+            { value: 'exact_sciences', label: 'Sciences Exactes', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01"></path></svg>' },
+            { value: 'economics', label: 'Sciences Économiques, Gestion et Commerce', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg>' },
+            { value: 'humanities', label: 'Sciences Humaines et Sociales', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87m-4-12a4 4 0 0 1 0 7.75"></path></svg>' },
+            { value: 'medicine', label: 'Médecine', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>' },
+            { value: 'letters', label: 'Lettres et Langues', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>' },
+            { value: 'law', label: 'Droit et Sciences Politiques', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18m-7-9h14M5 21h14"></path></svg>' },
+            { value: 'earth_sciences', label: 'Sciences de la Terre', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>' },
+            { value: 'architecture', label: 'Architecture et Urbanisme', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>' },
+            { value: 'agronomy', label: 'Sciences Agronomiques', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20m-7-9s3-2 7-2 7 2 7 2m-7-9s3 2 3 7-3 7-3 7-3-2-3-7 3-7 3-7"></path></svg>' },
+            { value: 'veterinary', label: 'Sciences Vétérinaires', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="4" r="2"></circle><circle cx="18" cy="8" r="2"></circle><circle cx="20" cy="16" r="2"></circle><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"></path></svg>' },
+            { value: 'pharmacy', label: 'Pharmacie', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3"></path><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line></svg>' },
+            { value: 'dentistry', label: 'Médecine Dentaire', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"></path><circle cx="12" cy="12" r="3"></circle></svg>' },
+            { value: 'islamic', label: 'Sciences Islamiques', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>' },
+            { value: 'information', label: 'Sciences de l\'Information et Communication', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>' },
+            { value: 'arts', label: 'Beaux-Arts', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6m0 6v6M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M2 12h6m6 0h6M4.93 19.07l4.24-4.24m5.66-5.66l4.24-4.24"></path></svg>' },
+            { value: 'sports', label: 'STAPS', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4m0-4h.01"></path></svg>' },
+            { value: 'maritime', label: 'Sciences Maritimes', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"></path></svg>' }
+        ];
+
+        const academicYearData = [
+            { value: 'L1', label: 'L1 (Licence 1)', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+            { value: 'L2', label: 'L2 (Licence 2)', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+            { value: 'L3', label: 'L3 (Licence 3)', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+            { value: 'M1', label: 'M1 (Master 1)', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+            { value: 'M2', label: 'M2 (Master 2)', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' }
+        ];
+
+        const semesterData = [
+            { value: '1', label: 'Semestre 1', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' },
+            { value: '2', label: 'Semestre 2', icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>' }
+        ];
+
+        function createDropdownAPI(menuElement, hiddenInput, triggerElement, labelElement, disabledFlag, hasSearch = false) {
+            let allOptions = [];
+            let searchInput = null;
+            let currentCallback = null;
+
+            function render(options, callback) {
+                allOptions = options;
+                currentCallback = callback;
+                menuElement.innerHTML = '';
+
+                if (hasSearch && options.length > 5) {
+                    const searchDiv = document.createElement('div');
+                    searchDiv.className = 'dropdown-search';
+                    searchDiv.innerHTML = `
+                        <input type="text" placeholder="بحث..." id="${menuElement.id}_search">
+                        <svg class="dropdown-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    `;
+                    menuElement.appendChild(searchDiv);
+                    searchInput = searchDiv.querySelector('input');
+                    searchInput.addEventListener('input', handleSearch);
+                }
+
+                options.forEach(opt => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'custom-dropdown-option';
+                    optionDiv.dataset.value = opt.value;
+                    optionDiv.innerHTML = `
+                        ${opt.icon ? `<span class="option-icon">${opt.icon}</span>` : ''}
+                        <span>${opt.label}</span>
+                    `;
+                    optionDiv.addEventListener('click', () => selectOption(opt));
+                    menuElement.appendChild(optionDiv);
+                });
+            }
+
+            function handleSearch(e) {
+                const query = e.target.value.toLowerCase();
+                const filteredOptions = allOptions.filter(opt => opt.label.toLowerCase().includes(query));
+                const searchDiv = menuElement.querySelector('.dropdown-search');
+                menuElement.innerHTML = '';
+                menuElement.appendChild(searchDiv);
+
+                if (filteredOptions.length === 0) {
+                    menuElement.innerHTML += '<div class="no-results">لا توجد نتائج</div>';
+                } else {
+                    filteredOptions.forEach(opt => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'custom-dropdown-option';
+                        optionDiv.dataset.value = opt.value;
+                        optionDiv.innerHTML = `
+                            ${opt.icon ? `<span class="option-icon">${opt.icon}</span>` : ''}
+                            <span>${opt.label}</span>
+                        `;
+                        optionDiv.addEventListener('click', () => selectOption(opt));
+                        menuElement.appendChild(optionDiv);
+                    });
+                }
+            }
+
+            function selectOption(option) {
+                hiddenInput.value = option.value;
+                labelElement.textContent = option.label;
+                close();
+                if (currentCallback) currentCallback(option);
+            }
+
+            function open() {
+                if (!triggerElement.classList.contains('disabled')) {
+                    menuElement.classList.add('show');
+                    triggerElement.classList.add('active');
+                    triggerElement.setAttribute('aria-expanded', 'true');
+                }
+            }
+
+            function close() {
+                menuElement.classList.remove('show');
+                triggerElement.classList.remove('active');
+                triggerElement.setAttribute('aria-expanded', 'false');
+            }
+
+            function enable() {
+                triggerElement.classList.remove('disabled');
+            }
+
+            function disable() {
+                triggerElement.classList.add('disabled');
+                close();
+            }
+
+            triggerElement.addEventListener('click', () => {
+                if (menuElement.classList.contains('show')) {
+                    close();
+                } else {
+                    open();
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!triggerElement.contains(e.target) && !menuElement.contains(e.target)) {
+                    close();
+                }
+            });
+
+            return {
+                setOptions: render,
+                enable,
+                disable,
+                close,
+                get currentCallback() { return currentCallback; },
+                set currentCallback(cb) { currentCallback = cb; }
+            };
+        }
+
+        const facultyHidden = document.getElementById('faculty');
+        const facultyTrigger = document.getElementById('facultyTrigger');
+        const facultyLabel = document.getElementById('facultyLabel');
+        const facultyMenu = document.getElementById('facultyMenu');
+        const facultyDropdownInstance = createDropdownAPI(facultyMenu, facultyHidden, facultyTrigger, facultyLabel, false, true);
+
+        const academicYearHidden = document.getElementById('academicYear');
+        const academicYearTrigger = document.getElementById('academicYearTrigger');
+        const academicYearLabel = document.getElementById('academicYearLabel');
+        const academicYearMenu = document.getElementById('academicYearMenu');
+        const academicYearDropdownInstance = createDropdownAPI(academicYearMenu, academicYearHidden, academicYearTrigger, academicYearLabel, true);
+
+        const specializationHidden = document.getElementById('specialization');
+        const specializationTrigger = document.getElementById('specializationTrigger');
+        const specializationLabel = document.getElementById('specializationLabel');
+        const specializationMenu = document.getElementById('specializationMenu');
+        const specializationDropdownInstance = createDropdownAPI(specializationMenu, specializationHidden, specializationTrigger, specializationLabel, true, true);
+
+        const semesterHidden = document.getElementById('semester');
+        const semesterTrigger = document.getElementById('semesterTrigger');
+        const semesterLabel = document.getElementById('semesterLabel');
+        const semesterMenu = document.getElementById('semesterMenu');
+        const semesterDropdownInstance = createDropdownAPI(semesterMenu, semesterHidden, semesterTrigger, semesterLabel, true);
+
+        let isAcademicYearDisabled = true;
+        let isSpecializationDisabled = true;
+        let isSemesterDisabled = true;
+
+        function selectFaculty(faculty) {
+            academicYearHidden.value = '';
+            specializationHidden.value = '';
+            semesterHidden.value = '';
+            academicYearLabel.textContent = '-- اختر السنة --';
+            specializationLabel.textContent = '-- اختر السنة أولاً --';
+            semesterLabel.textContent = '-- اختر التخصص أولاً --';
+            
+            academicYearDropdownInstance.enable();
+            academicYearDropdownInstance.setOptions(academicYearData, selectAcademicYear);
+            isAcademicYearDisabled = false;
+            
+            specializationDropdownInstance.disable();
+            isSpecializationDisabled = true;
+            semesterDropdownInstance.disable();
+            isSemesterDisabled = true;
+
+            updateStepper(1);
+        }
+
+        function selectAcademicYear(year) {
+            const selectedFaculty = facultyHidden.value;
+            const specializations = academicStructure[selectedFaculty]?.[year.value] || [];
+            
+            specializationHidden.value = '';
+            semesterHidden.value = '';
+            semesterLabel.textContent = '-- اختر التخصص أولاً --';
+            
+            if (specializations.length > 0) {
+                const specializationOptions = specializations.map(spec => ({ value: spec, label: spec }));
+                specializationDropdownInstance.enable();
+                specializationDropdownInstance.setOptions(specializationOptions, selectSpecialization);
+                isSpecializationDisabled = false;
+                specializationLabel.textContent = '-- اختر التخصص --';
+            } else {
+                specializationDropdownInstance.disable();
+                isSpecializationDisabled = true;
+                specializationLabel.textContent = 'التخصصات لهذه السنة ستتوفر قريبًا';
+            }
+            
+            semesterDropdownInstance.disable();
+            isSemesterDisabled = true;
+
+            updateStepper(2);
+        }
+
+        function selectSpecialization(specialization) {
+            semesterHidden.value = '';
+            semesterDropdownInstance.enable();
+            semesterDropdownInstance.setOptions(semesterData, selectSemester);
+            isSemesterDisabled = false;
+            semesterLabel.textContent = '-- اختر الفصل --';
+
+            updateStepper(3);
+        }
+
+        function selectSemester(semester) {
+            updateStepper(4);
+        }
+
+        function updateStepper(completedStep) {
+            const steps = document.querySelectorAll('.step');
+            const progressBar = document.getElementById('stepperProgress');
+            
+            steps.forEach((step, index) => {
+                const stepNumber = index + 1;
+                if (stepNumber < completedStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNumber === completedStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+
+            const progressPercentage = ((completedStep - 1) / 3) * 60;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        facultyDropdownInstance.setOptions(facultyData, selectFaculty);
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const savedTheme = localStorage.getItem('unimoy-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        if (savedTheme === 'light') {
+            themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('unimoy-theme', newTheme);
+
+            if (newTheme === 'light') {
+                themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            } else {
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            }
+        });
+
+        const helpButton = document.getElementById('helpButton');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpModal = document.getElementById('closeHelpModal');
+
+        helpButton.addEventListener('click', () => helpModal.classList.add('show'));
+        closeHelpModal.addEventListener('click', () => helpModal.classList.remove('show'));
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) helpModal.classList.remove('show');
+        });
+
+        const aboutButton = document.getElementById('aboutButton');
+        const aboutModal = document.getElementById('aboutModal');
+        const closeAboutModal = document.getElementById('closeAboutModal');
+
+        aboutButton.addEventListener('click', () => aboutModal.classList.add('show'));
+        closeAboutModal.addEventListener('click', () => aboutModal.classList.remove('show'));
+        aboutModal.addEventListener('click', (e) => {
+            if (e.target === aboutModal) aboutModal.classList.remove('show');
+        });
+
+        const savedFaculty = localStorage.getItem('unimoy-faculty');
+        const savedAcademicYear = localStorage.getItem('unimoy-academicYear');
+        const savedSpecialization = localStorage.getItem('unimoy-specialization');
+        const savedSemester = localStorage.getItem('unimoy-semester');
+
+        if (savedFaculty) {
+            const faculty = facultyData.find(f => f.value === savedFaculty);
+            if (faculty) {
+                facultyHidden.value = faculty.value;
+                facultyLabel.textContent = faculty.label;
+                selectFaculty(faculty);
+            }
+        }
+
+        if (savedAcademicYear && !isAcademicYearDisabled) {
+            const year = academicYearData.find(y => y.value === savedAcademicYear);
+            if (year) {
+                academicYearHidden.value = year.value;
+                academicYearLabel.textContent = year.label;
+                selectAcademicYear(year);
+            }
+        }
+
+        if (savedSpecialization && !isSpecializationDisabled) {
+            specializationHidden.value = savedSpecialization;
+            specializationLabel.textContent = savedSpecialization;
+            selectSpecialization({ value: savedSpecialization, label: savedSpecialization });
+        }
+
+        if (savedSemester && !isSemesterDisabled) {
+            const semester = semesterData.find(s => s.value === savedSemester);
+            if (semester) {
+                semesterHidden.value = semester.value;
+                semesterLabel.textContent = semester.label;
+                selectSemester(semester);
+            }
+        }
+    </script>
+</body>
+</html>
